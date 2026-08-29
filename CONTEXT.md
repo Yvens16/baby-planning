@@ -25,8 +25,12 @@ A Family-scoped classification for Reminders (vaccine, appointment, and others t
 _Avoid_: Category, tag, kind, label
 
 **Reminder**:
-A dated, typed commitment in a Family. Attached to one or more Babies. Personal (one Operator) or shared (every Operator in that Family). Recipients must be able to see it.
+A dated, typed commitment in a Family. Attached to one or more Babies. Personal (one Operator) or shared (every Operator in that Family). Recipients must be able to see it. After Delivery, the Reminder stays as a completed record (`delivered_at` set); Due, Recipients, and title are read-only.
 _Avoid_: Task, todo, event, notification
+
+**Delivered**:
+A Reminder whose Delivery Twilio accepted. It remains in the table with `delivered_at` set; default views show upcoming Reminders only.
+_Avoid_: Sent, completed, archived, done
 
 **Due**:
 The instant a Reminder should be delivered, in the Family's timezone.

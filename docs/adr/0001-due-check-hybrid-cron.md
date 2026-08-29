@@ -6,4 +6,4 @@ Hosted `pg_cron` fires every five minutes (`*/5 * * * *`) and `pg_net` POSTs to 
 
 **Considered options:** SQL-only (cron runs PL/pgSQL and calls Twilio from SQL/`pg_net`) was rejected — Twilio Utility templates, error taxonomy, retry semantics, and TDD for send are poor fits for PL/pgSQL. Pure Edge Function with the due query in TypeScript was viable; SQL for the due query keeps the “what is due?” predicate testable and close to the data.
 
-**Consequences:** Two deployables (migration scheduling cron + Edge Function). Two secret stores (Vault for cron/`pg_net`, function env for Twilio). Post-delivery lifecycle and already-due Reminders remain open on [What happens to a Reminder after Delivery, and if created already due?](https://github.com/Yvens16/baby-planning/issues/7).
+**Consequences:** Two deployables (migration scheduling cron + Edge Function). Two secret stores (Vault for cron/`pg_net`, function env for Twilio). Due query uses `due <= now() AND delivered_at IS NULL` (past Due at create sends on next tick; successful Delivery sets `delivered_at`).
