@@ -9,8 +9,12 @@ The household this product is for. Operators, babies, reminder types, and remind
 _Avoid_: Workspace, account, household, group
 
 **Operator**:
-A person who can create and change reminders in a Family they belong to. A Family starts with two Operators and can have more. All Operators in a Family are equal. One Operator can belong to several Families.
+A person who can create and change reminders in a Family they belong to. A Family starts with two Operators and can have more. All Operators in a Family are equal. One Operator can belong to several Families. Carries an optional WhatsApp number (E.164) for Delivery; not required at signup.
 _Avoid_: User, member, parent, account
+
+**Operator WhatsApp number**:
+The E.164 phone number on an Operator used for Delivery. Collected in profile/settings or when first selected as a Recipient; must be verified before it can receive Delivery. One number per Operator across all Families.
+_Avoid_: Phone, mobile, contact number
 
 **Membership**:
 The fact that an Operator belongs to a Family.
