@@ -17,7 +17,7 @@ The fact that an Operator belongs to a Family.
 _Avoid_: Seat, invite, role
 
 **Baby**:
-A child a Family is planning for. A Family can have several.
+A child a Family is planning for. Has a display name, optional due and birth dates (at least one required at creation), and optional sex. Born once birth date is set via an explicit mark-born action.
 _Avoid_: Child, kid, infant
 
 **Reminder Type**:
