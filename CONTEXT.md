@@ -5,11 +5,11 @@ A family records dated commitments around its babies' lives and gets pinged when
 ## Language
 
 **Family**:
-The household this product is for. Operators, babies, reminder types, and reminders belong to a Family. Many Families exist. A Family has one timezone; Due is in that timezone.
+The household this product is for. Operators, babies, reminder types, and reminders belong to a Family. Many Families exist. A Family has one timezone; Due is in that timezone. A Family ends when its last Membership ends.
 _Avoid_: Workspace, account, household, group
 
 **Operator**:
-A person who can create and change reminders in a Family they belong to. A Family starts with two Operators and can have more. All Operators in a Family are equal. One Operator can belong to several Families. Carries an optional WhatsApp number (E.164) for Delivery; not required at signup.
+A person who can create and change reminders in a Family they belong to. A Family has one or more Operators; all are equal. One Operator can belong to several Families. Carries an optional WhatsApp number (E.164) for Delivery; not required at signup.
 _Avoid_: User, member, parent, account
 
 **Operator WhatsApp number**:
@@ -17,8 +17,8 @@ The E.164 phone number on an Operator used for Delivery. Collected in profile/se
 _Avoid_: Phone, mobile, contact number
 
 **Membership**:
-The fact that an Operator belongs to a Family.
-_Avoid_: Seat, invite, role
+The fact that an Operator belongs to a Family. It ends when that Operator leaves or is removed by another Operator; the last Membership ending ends the Family.
+_Avoid_: Seat, invite, role, owner
 
 **Baby**:
 A child a Family is planning for. Has a display name, optional due and birth dates (at least one required at creation), and optional sex. Born once birth date is set via an explicit mark-born action.

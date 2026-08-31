@@ -1,0 +1,9 @@
+# Membership ends by leave or remove; Family ends only with the last Membership
+
+Ticket: [What happens when an Operator leaves a Family, is removed, or a Family is deleted?](https://github.com/Yvens16/baby-planning/issues/23)
+
+Any Operator may **leave** (end their own Membership) or **remove** another Operator (named confirmation). There is no Owner. A Family is not deleted while anyone still belongs; it ends only when its last Membership ends, and that last act is Leave with extra confirmation listing Baby and Reminder counts. Last Membership ending hard-deletes the Family and everything on it (Babies, Reminder Types, Reminders, unused invite links). When Membership ends and the Family continues: the departing Operator’s personal Reminders are hard-deleted; shared Reminders stay (drop them from Recipients; empty Recipients stay Due and visible, no Delivery); unused invite links are invalidated so the unused URL is not a backdoor. No leave/remove notice in v1.
+
+**Considered options:** No-remove (self-leave only) was rejected — after a split the remaining Operator would be stuck with the ex’s access. Explicit “delete Family” while others still belong was rejected — Family-owned Babies are not one Operator’s to wipe. Soft-delete / empty-the-Family-first on last leave was rejected as recovery we will not build and busywork on the way out. Keeping hidden personal Reminders was rejected because they would block Baby hard-delete. Leaving unused invites valid was rejected as a rejoin backdoor.
+
+**Consequences:** Due-check skips Recipients-empty Reminders (stay Due, no Delivery). Remaining Operators can hard-delete those rows ([Can an Operator delete a Reminder, and is it soft or hard?](https://github.com/Yvens16/baby-planning/issues/24)). Rejoin requires a fresh invite; personal Reminders and Recipient slots are not restored. Operator identity and other Families are untouched.
