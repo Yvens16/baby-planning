@@ -13,15 +13,18 @@ import { VariantA } from "./variant-a";
 import { VariantB } from "./variant-b";
 import { VariantC } from "./variant-c";
 
-// Three variants of Family switching (persistent header / picker sheet /
-// family-as-room), via ?variant=, on throwaway /prototype/family-switch.
-// Host is a cheap sketch of the reminder list already decided (cards + sheet).
+// Winner: B chrome + A discard + name-only when one Family.
+// `?variant=A|B|C` keeps the rejected takes. `?one=1` previews a single Membership.
 
 export function FamilySwitchPrototype() {
   const searchParams = useSearchParams();
   const raw = searchParams.get("variant");
   const variant: FamilySwitchVariant =
-    raw === "B" || raw === "C" || raw === "A" ? raw : "A";
+    raw === "A" || raw === "C" ? raw : "B";
+  const one = searchParams.get("one") === "1";
+  const families = one
+    ? FAMILIES.filter((f) => f.id === "martin")
+    : FAMILIES;
 
   const [familyId, setFamilyId] = useState("martin");
   const [sheet, setSheet] = useState<Sheet>({ mode: "closed" });
@@ -42,10 +45,12 @@ export function FamilySwitchPrototype() {
     setDraftsByFamily({});
     setPendingId(null);
     setShowDelivered(false);
-    setLastAction(`variante ${variant} · Famille Martin`);
-  }, [variant]);
+    setLastAction(
+      `variante ${variant}${one ? " · une famille" : ""} · Famille Martin`,
+    );
+  }, [variant, one]);
 
-  const current = FAMILIES.find((f) => f.id === familyId) ?? FAMILIES[0];
+  const current = families.find((f) => f.id === familyId) ?? families[0];
   const dirty = sheet.mode !== "closed" && draftTitle !== initialTitle;
 
   function log(msg: string) {
@@ -85,7 +90,7 @@ export function FamilySwitchPrototype() {
       },
       setDraftTitle: (v) => setDraftTitle(v),
       switchNow: (id, mode) => {
-        const next = FAMILIES.find((f) => f.id === id);
+        const next = families.find((f) => f.id === id);
         if (!next) return;
         setPendingId(null);
         if (mode === "stash" && dirty) {
@@ -130,7 +135,7 @@ export function FamilySwitchPrototype() {
       },
       log,
     }),
-    [dirty, draftTitle, draftsByFamily, familyId],
+    [dirty, draftTitle, draftsByFamily, families, familyId],
   );
 
   function seedDraft() {
@@ -141,6 +146,7 @@ export function FamilySwitchPrototype() {
 
   const lines = [
     `famille: ${current.name} (${current.timezone})`,
+    `memberships: ${families.length}`,
     `bébés: ${current.babies.map((b) => b.name).join(", ") || "—"}`,
     `feuille: ${sheet.mode}${dirty ? " · SALE" : ""}`,
     `titre: ${sheet.mode === "closed" ? "—" : `"${draftTitle}"`}`,
@@ -157,12 +163,13 @@ export function FamilySwitchPrototype() {
   return (
     <div className="min-h-dvh bg-stone-200 pb-36 pt-6">
       <p className="mx-auto mb-3 max-w-xl px-4 text-center text-xs text-stone-600">
-        PROTOTYPE — comment un opérateur change de famille. ← → ou la barre
-        violette. « Ouvrir un brouillon » puis change de famille.
+        PROTOTYPE — gagnant: B (titre + picker) + jeter le brouillon. ← → pour
+        A/C. `?one=1` = une seule famille (nom, pas de picker). « Ouvrir un
+        brouillon » puis change de famille.
       </p>
       {variant === "A" && (
         <VariantA
-          families={FAMILIES}
+          families={families}
           current={current}
           sheet={sheet}
           draftTitle={draftTitle}
@@ -174,20 +181,19 @@ export function FamilySwitchPrototype() {
       )}
       {variant === "B" && (
         <VariantB
-          families={FAMILIES}
+          families={families}
           current={current}
           sheet={sheet}
           draftTitle={draftTitle}
           dirty={dirty}
           pendingId={pendingId}
-          draftsByFamily={draftsByFamily}
           showDelivered={showDelivered}
           actions={actions}
         />
       )}
       {variant === "C" && (
         <VariantC
-          families={FAMILIES}
+          families={families}
           current={current}
           sheet={sheet}
           draftTitle={draftTitle}

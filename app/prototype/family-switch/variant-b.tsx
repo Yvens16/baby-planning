@@ -21,7 +21,6 @@ export function VariantB({
   draftTitle,
   dirty,
   pendingId,
-  draftsByFamily,
   showDelivered,
   actions,
 }: {
@@ -31,11 +30,11 @@ export function VariantB({
   draftTitle: string;
   dirty: boolean;
   pendingId: string | null;
-  draftsByFamily: Record<string, string>;
   showDelivered: boolean;
   actions: HostActions;
 }) {
   const [picker, setPicker] = useState(false);
+  const canSwitch = families.length > 1;
 
   function requestSwitch(id: string) {
     if (id === current.id) {
@@ -43,11 +42,11 @@ export function VariantB({
       return;
     }
     if (sheet.mode !== "closed" && dirty) {
-      actions.askStash(id);
+      actions.askDiscard(id);
       return;
     }
     setPicker(false);
-    actions.switchNow(id, "stash");
+    actions.switchNow(id, "discard");
   }
 
   const pending = families.find((f) => f.id === pendingId);
@@ -56,21 +55,20 @@ export function VariantB({
     <Phone>
       <header className="relative z-40 border-b border-stone-200 bg-[#faf7f2] px-4 pt-5 pb-3">
         <p className="text-xs text-stone-500">Marie</p>
-        <button
-          type="button"
-          onClick={() => setPicker(true)}
-          className="mt-1 flex w-full items-start justify-between gap-2 text-left"
-        >
-          <div>
-            <h1 className="text-2xl leading-7 font-semibold tracking-tight">
-              {current.name}
-            </h1>
-            <p className="mt-1 text-sm text-stone-500">
-              {current.tzLabel} · {babyLine(current)}
-            </p>
+        {canSwitch ? (
+          <button
+            type="button"
+            onClick={() => setPicker(true)}
+            className="mt-1 flex w-full items-start justify-between gap-2 text-left"
+          >
+            <Title current={current} />
+            <span className="mt-1 text-stone-400">▾</span>
+          </button>
+        ) : (
+          <div className="mt-1">
+            <Title current={current} />
           </div>
-          <span className="mt-1 text-stone-400">▾</span>
-        </button>
+        )}
       </header>
       <ReminderFeed
         family={current}
@@ -100,65 +98,59 @@ export function VariantB({
               </button>
             </div>
             <ul className="space-y-2">
-              {families.map((f) => {
-                const draft = draftsByFamily[f.id];
-                return (
-                  <li key={f.id}>
-                    <button
-                      type="button"
-                      onClick={() => requestSwitch(f.id)}
-                      className="w-full rounded-2xl p-4 text-left ring-1 ring-stone-200 hover:bg-stone-50"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-stone-900">
-                          {f.name}
-                        </span>
-                        {f.id === current.id && (
-                          <span className="text-sm text-teal-700">actuelle</span>
-                        )}
-                      </div>
-                      <p className="mt-1 text-sm text-stone-500">
-                        {f.tzLabel} · {babyLine(f)} · {f.operators.length}{" "}
-                        {f.operators.length > 1 ? "opérateurs" : "opérateur"}
-                        {f.inviteLive ? " · lien d’invite vivant" : ""}
-                      </p>
-                      {draft ? (
-                        <p className="mt-2 text-xs text-amber-800">
-                          Brouillon gardé : « {draft} »
-                        </p>
-                      ) : null}
-                    </button>
-                  </li>
-                );
-              })}
+              {families.map((f) => (
+                <li key={f.id}>
+                  <button
+                    type="button"
+                    onClick={() => requestSwitch(f.id)}
+                    className="w-full rounded-2xl p-4 text-left ring-1 ring-stone-200 hover:bg-stone-50"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-stone-900">
+                        {f.name}
+                      </span>
+                      {f.id === current.id && (
+                        <span className="text-sm text-teal-700">actuelle</span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-sm text-stone-500">
+                      {f.tzLabel} · {babyLine(f)} · {f.operators.length}{" "}
+                      {f.operators.length > 1 ? "opérateurs" : "opérateur"}
+                      {f.inviteLive ? " · lien d’invite vivant" : ""}
+                    </p>
+                  </button>
+                </li>
+              ))}
             </ul>
-            <div className="mt-4 space-y-1 border-t border-stone-100 pt-3 text-sm text-stone-400">
-              <p>+ Créer une famille (hors ticket)</p>
-              <p>Rejoindre avec un lien (hors ticket)</p>
-            </div>
           </div>
         </div>
       )}
       {pending && (
         <Confirm
-          title="Garder le brouillon ?"
-          body={`« ${draftTitle || "sans titre"} » peut rester sur ${current.name}. Tu le retrouves en revenant.`}
+          title="Quitter le brouillon ?"
+          body={`Changer pour ${pending.name} jette le rappel en cours. Rien n’est gardé.`}
           cancel="Rester"
-          confirm="Garder"
+          confirm="Changer"
           onCancel={actions.clearPending}
           onConfirm={() => {
             setPicker(false);
-            actions.switchNow(pending.id, "stash");
-          }}
-          tertiary={{
-            label: "Jeter",
-            onClick: () => {
-              setPicker(false);
-              actions.switchNow(pending.id, "discard");
-            },
+            actions.switchNow(pending.id, "discard");
           }}
         />
       )}
     </Phone>
+  );
+}
+
+function Title({ current }: { current: Family }) {
+  return (
+    <div>
+      <h1 className="text-2xl leading-7 font-semibold tracking-tight">
+        {current.name}
+      </h1>
+      <p className="mt-1 text-sm text-stone-500">
+        {current.tzLabel} · {babyLine(current)}
+      </p>
+    </div>
   );
 }
