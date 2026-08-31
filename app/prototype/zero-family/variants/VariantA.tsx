@@ -11,6 +11,8 @@ import {
 
 export const variantName = "Two doors";
 
+type Sheet = "none" | "create" | "join";
+
 export function VariantA({
   session,
   onCreate,
@@ -24,7 +26,7 @@ export function VariantA({
   onConfirmJoin: () => void;
   onCancelJoin: () => void;
 }) {
-  const [door, setDoor] = useState<"create" | "join" | null>(null);
+  const [sheet, setSheet] = useState<Sheet>("none");
   const [name, setName] = useState("");
   const [timezone, setTimezone] = useState(browserTimezone);
   const [invite, setInvite] = useState("");
@@ -33,6 +35,13 @@ export function VariantA({
 
   const current = session.families[0];
   const first = session.scene === "first";
+
+  function open(next: Sheet) {
+    setSheet(next);
+    setNameError(null);
+    setJoinError(null);
+    if (next !== "join") onCancelJoin();
+  }
 
   if (current) {
     return (
@@ -47,7 +56,7 @@ export function VariantA({
   }
 
   return (
-    <div className="min-h-dvh bg-[#f4efe6] px-5 py-16 text-[#2a2118] sm:px-10">
+    <div className="relative min-h-dvh bg-[#f4efe6] px-5 py-16 text-[#2a2118] sm:px-10">
       <div className="mx-auto max-w-4xl">
         <p className="text-xs uppercase tracking-[0.25em] text-[#8a6d4d]">
           {session.email}
@@ -66,128 +75,121 @@ export function VariantA({
         <div className="mt-12 grid gap-4 md:grid-cols-2">
           <button
             type="button"
-            onClick={() => {
-              setDoor("create");
-              setJoinError(null);
-              onCancelJoin();
-            }}
-            className={`rounded-3xl border px-6 py-8 text-left transition ${
-              door === "create"
-                ? "border-[#2a2118] bg-[#2a2118] text-[#f4efe6]"
-                : "border-[#d8cbb8] bg-[#fffaf3] hover:border-[#2a2118]"
-            }`}
+            onClick={() => open("create")}
+            className="rounded-3xl border border-[#d8cbb8] bg-[#fffaf3] px-6 py-8 text-left transition hover:border-[#2a2118]"
           >
-            <span className="text-xs uppercase tracking-[0.2em] opacity-70">
+            <span className="text-xs uppercase tracking-[0.2em] text-[#8a6d4d]">
               Commencer
             </span>
             <span className="mt-3 block font-serif text-3xl">
               Créer une famille
             </span>
-            <span className="mt-3 block text-sm opacity-80">
+            <span className="mt-3 block text-sm text-[#6b5848]">
               Nom + fuseau. Pas de bébé pour l’instant.
             </span>
           </button>
 
           <button
             type="button"
-            onClick={() => {
-              setDoor("join");
-              setNameError(null);
-            }}
-            className={`rounded-3xl border px-6 py-8 text-left transition ${
-              door === "join"
-                ? "border-[#2a2118] bg-[#2a2118] text-[#f4efe6]"
-                : "border-[#d8cbb8] bg-[#fffaf3] hover:border-[#2a2118]"
-            }`}
+            onClick={() => open("join")}
+            className="rounded-3xl border border-[#d8cbb8] bg-[#fffaf3] px-6 py-8 text-left transition hover:border-[#2a2118]"
           >
-            <span className="text-xs uppercase tracking-[0.2em] opacity-70">
+            <span className="text-xs uppercase tracking-[0.2em] text-[#8a6d4d]">
               On m’a invitée
             </span>
             <span className="mt-3 block font-serif text-3xl">
               Coller un lien
             </span>
-            <span className="mt-3 block text-sm opacity-80">
+            <span className="mt-3 block text-sm text-[#6b5848]">
               Une invitation, un nouvel opérateur. Lien à usage unique.
             </span>
           </button>
         </div>
+      </div>
 
-        {door === "create" && (
-          <form
-            className="mt-8 rounded-3xl bg-[#fffaf3] p-6 shadow-sm"
-            onSubmit={(event) => {
-              event.preventDefault();
-              const error = validateFamilyName(name);
-              setNameError(error);
-              if (!error) onCreate(name.trim(), timezone);
-            }}
+      {sheet !== "none" && (
+        <div
+          className="fixed inset-0 z-30 bg-black/40"
+          onClick={() => open("none")}
+        >
+          <div
+            className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-[#fffaf3] px-5 pb-28 pt-4 text-[#2a2118]"
+            onClick={(event) => event.stopPropagation()}
           >
-            <label className="block text-sm font-medium">
-              Nom de la famille
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                maxLength={50}
-                className="mt-2 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
-                placeholder="Famille Martin"
-              />
-            </label>
-            {nameError && (
-              <p className="mt-2 text-sm text-red-700">{nameError}</p>
-            )}
-            <label className="mt-4 block text-sm font-medium">
-              Fuseau (échéances)
-              <select
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-                className="mt-2 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
+            <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-[#d8cbb8]" />
+            {sheet === "create" ? (
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  const error = validateFamilyName(name);
+                  setNameError(error);
+                  if (!error) {
+                    onCreate(name.trim(), timezone);
+                    open("none");
+                  }
+                }}
               >
-                {timezoneOptions().map((tz) => (
-                  <option key={tz} value={tz}>
-                    {tz}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <button
-              type="submit"
-              className="mt-6 rounded-full bg-[#2a2118] px-5 py-2.5 text-sm text-[#f4efe6]"
-            >
-              Créer
-            </button>
-          </form>
-        )}
-
-        {door === "join" && (
-          <div className="mt-8 rounded-3xl bg-[#fffaf3] p-6 shadow-sm">
-            {session.pendingJoin ? (
+                <h2 className="font-serif text-2xl">Nouvelle famille</h2>
+                <label className="mt-4 block text-sm font-medium">
+                  Nom
+                  <input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    maxLength={50}
+                    className="mt-1 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
+                    placeholder="Famille Martin"
+                  />
+                </label>
+                {nameError && (
+                  <p className="mt-2 text-sm text-red-700">{nameError}</p>
+                )}
+                <label className="mt-3 block text-sm font-medium">
+                  Fuseau (échéances)
+                  <select
+                    value={timezone}
+                    onChange={(e) => setTimezone(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
+                  >
+                    {timezoneOptions().map((tz) => (
+                      <option key={tz} value={tz}>
+                        {tz}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <button
+                  type="submit"
+                  className="mt-5 w-full rounded-full bg-[#2a2118] py-2.5 text-sm text-[#f4efe6]"
+                >
+                  Créer
+                </button>
+              </form>
+            ) : session.pendingJoin ? (
               <div>
-                <p className="font-serif text-2xl">
+                <h2 className="font-serif text-2xl">
                   Rejoindre {session.pendingJoin.name} ?
-                </p>
-                <p className="mt-2 text-[#6b5848]">
+                </h2>
+                <p className="mt-2 text-sm text-[#6b5848]">
                   Fuseau {session.pendingJoin.timezone}. Vous devenez
                   opératrice, au même titre que les autres.
                 </p>
-                <div className="mt-6 flex gap-3">
-                  <button
-                    type="button"
-                    onClick={onConfirmJoin}
-                    className="rounded-full bg-[#2a2118] px-5 py-2.5 text-sm text-[#f4efe6]"
-                  >
-                    Rejoindre {session.pendingJoin.name}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onCancelJoin();
-                      setJoinError(null);
-                    }}
-                    className="rounded-full px-5 py-2.5 text-sm"
-                  >
-                    Annuler
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onConfirmJoin();
+                    open("none");
+                  }}
+                  className="mt-5 w-full rounded-full bg-[#2a2118] py-2.5 text-sm text-[#f4efe6]"
+                >
+                  Rejoindre {session.pendingJoin.name}
+                </button>
+                <button
+                  type="button"
+                  onClick={onCancelJoin}
+                  className="mt-2 w-full py-2 text-sm"
+                >
+                  Annuler
+                </button>
               </div>
             ) : (
               <form
@@ -206,12 +208,13 @@ export function VariantA({
                   );
                 }}
               >
-                <label className="block text-sm font-medium">
+                <h2 className="font-serif text-2xl">Coller le lien</h2>
+                <label className="mt-4 block text-sm font-medium">
                   Lien d’invitation
                   <input
                     value={invite}
                     onChange={(e) => setInvite(e.target.value)}
-                    className="mt-2 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
+                    className="mt-1 w-full rounded-xl border border-[#d8cbb8] bg-white px-3 py-2"
                     placeholder="https://…/join/famille-martin"
                   />
                 </label>
@@ -220,15 +223,15 @@ export function VariantA({
                 )}
                 <button
                   type="submit"
-                  className="mt-6 rounded-full bg-[#2a2118] px-5 py-2.5 text-sm text-[#f4efe6]"
+                  className="mt-5 w-full rounded-full bg-[#2a2118] py-2.5 text-sm text-[#f4efe6]"
                 >
                   Continuer
                 </button>
               </form>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

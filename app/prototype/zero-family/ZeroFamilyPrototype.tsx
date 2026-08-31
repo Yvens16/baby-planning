@@ -1,8 +1,8 @@
 "use client";
 
 // Three variants of the zero-Family home after sign-in, switchable via
-// ?variant=A|B|C on throwaway /prototype/zero-family. ?scene=first|left
-// swaps first-run vs after-leaving-the-last-Family copy.
+// ?variant=A|B|C on throwaway /prototype/zero-family. Winner: A (two doors)
+// + bottom sheet for create/join; ?scene=first|left is the same screen.
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
