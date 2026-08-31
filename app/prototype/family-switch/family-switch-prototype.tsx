@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import {
+  FAMILY_SWITCH_VARIANTS,
   PrototypeSwitcher,
   type FamilySwitchVariant,
 } from "../prototype-switcher";
@@ -203,7 +204,7 @@ export function FamilySwitchPrototype() {
         />
       )}
       <StateDump lines={lines} onSeedDraft={seedDraft} />
-      <PrototypeSwitcher current={variant} />
+      <PrototypeSwitcher current={variant} variants={FAMILY_SWITCH_VARIANTS} />
     </div>
   );
 }

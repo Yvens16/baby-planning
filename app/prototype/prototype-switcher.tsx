@@ -12,22 +12,31 @@ export const FAMILY_SWITCH_VARIANTS = {
 
 export type FamilySwitchVariant = keyof typeof FAMILY_SWITCH_VARIANTS;
 
-const KEYS = Object.keys(FAMILY_SWITCH_VARIANTS) as FamilySwitchVariant[];
+export const PUSH_PERMISSION_VARIANTS = {
+  A: "Bandeau haut",
+  B: "Bandeau pied",
+  C: "Carte + pièce",
+} as const;
+
+export type PushPermissionVariant = keyof typeof PUSH_PERMISSION_VARIANTS;
 
 export function PrototypeSwitcher({
   current,
+  variants,
 }: {
-  current: FamilySwitchVariant;
+  current: string;
+  variants: Record<string, string>;
 }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const i = KEYS.indexOf(current);
-  const prev = KEYS[(i - 1 + KEYS.length) % KEYS.length];
-  const next = KEYS[(i + 1) % KEYS.length];
+  const keys = Object.keys(variants);
+  const i = Math.max(0, keys.indexOf(current));
+  const prev = keys[(i - 1 + keys.length) % keys.length];
+  const next = keys[(i + 1) % keys.length];
 
-  function hrefFor(v: FamilySwitchVariant) {
+  function hrefFor(v: string) {
     const params = new URLSearchParams(searchParams.toString());
     params.set("variant", v);
     return `${pathname}?${params.toString()}`;
@@ -65,7 +74,7 @@ export function PrototypeSwitcher({
           ←
         </Link>
         <div className="min-w-[11rem] text-center text-xs font-medium tracking-wide">
-          {current} ({FAMILY_SWITCH_VARIANTS[current]})
+          {current} ({variants[current]})
         </div>
         <Link
           href={hrefFor(next)}
