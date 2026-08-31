@@ -13,7 +13,7 @@ A person who can create and change reminders in a Family they belong to. A Famil
 _Avoid_: User, member, parent, account
 
 **Device**:
-A browser or Home Screen install belonging to an Operator that can receive Delivery. An Operator may have several. A live Device has granted permission and a current push token.
+A browser or Home Screen install belonging to the Operator signed in on it that can receive Delivery. An Operator may have several. A live Device has granted permission and a current push token. Sign-out ends this Device only; settings can forget any Device.
 _Avoid_: Subscription, endpoint, token, notification target
 
 **Membership**:
@@ -33,7 +33,7 @@ A dated, typed commitment in a Family. Attached to one or more Babies. Personal 
 _Avoid_: Task, todo, event, notification
 
 **Delivered**:
-A Reminder whose Delivery was accepted. It remains in the table with `delivered_at` set until hard-deleted; default views show upcoming Reminders only.
+A Reminder on which every Recipient has a Receipt. It remains in the table with `delivered_at` set until hard-deleted; default views show upcoming Reminders only. A Reminder with no Recipients is not Delivered; it stays due.
 _Avoid_: Sent, completed, archived, done
 
 **Due**:
@@ -41,9 +41,13 @@ The instant a Reminder should be delivered, in the Family's timezone.
 _Avoid_: Deadline, scheduled time, notify-at
 
 **Delivery**:
-The push sent when a Reminder is due, to every live Device of each Recipient on that Reminder.
+The push sent when a Reminder is due, to every live Device of each Recipient who does not yet have a Receipt. A Recipient is sent once.
 _Avoid_: Notification, ping, alert, text, WhatsApp
 
+**Receipt**:
+The record that Delivery was accepted for one Recipient on one Reminder. Later ticks skip anyone who already has a Receipt. Unreachable Recipients get no Receipt until they have a live Device; the Reminder stays due.
+_Avoid_: Ack, send log, notification record
+
 **Recipient**:
-An Operator selected on a Reminder to receive its Delivery. Need not be reachable at selection; the form warns if they aren't. On a personal Reminder, only that Operator. On a shared Reminder, any Operator in the Family.
+An Operator selected on a Reminder to receive its Delivery. Need not be reachable at selection; the form warns if they aren't, without saying why. On a personal Reminder, only that Operator. On a shared Reminder, any Operator in the Family.
 _Avoid_: Subscriber, notifier
