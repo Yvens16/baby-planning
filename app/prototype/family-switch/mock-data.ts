@@ -29,6 +29,71 @@ export type Family = {
 
 export const ME: Operator = { id: "marie", name: "Marie" };
 
+export const TIMEZONES: { id: string; label: string }[] = [
+  { id: "Europe/Paris", label: "Paris" },
+  { id: "America/Martinique", label: "Martinique" },
+  { id: "America/Guadeloupe", label: "Guadeloupe" },
+  { id: "Europe/London", label: "Londres" },
+];
+
+export function tzLabelFor(timezone: string): string {
+  return TIMEZONES.find((tz) => tz.id === timezone)?.label ?? timezone;
+}
+
+export function emptyFamily(name: string, timezone: string): Family {
+  const id = slug(name);
+  return {
+    id: id || `famille-${Date.now()}`,
+    name,
+    timezone,
+    tzLabel: tzLabelFor(timezone),
+    babies: [],
+    operators: [ME],
+    reminders: [],
+    inviteLive: false,
+  };
+}
+
+/** Stub invites: token or `/join/{token}`. */
+export const JOIN_STUBS: Record<string, Family> = {
+  "famille-dubois": emptyFamily("Famille Dubois", "Europe/Paris"),
+};
+
+export type InviteLookup =
+  | { kind: "ok"; family: Family }
+  | { kind: "member"; family: Family }
+  | { kind: "used" }
+  | { kind: "invalid" };
+
+export function lookupInvite(input: string, roster: Family[]): InviteLookup {
+  const token = extractJoinToken(input);
+  if (!token) return { kind: "invalid" };
+  if (token === "used-up") return { kind: "used" };
+  const existing = roster.find(
+    (f) => f.id === token || slug(f.name) === token,
+  );
+  if (existing) return { kind: "member", family: existing };
+  const stub = JOIN_STUBS[token];
+  if (stub) return { kind: "ok", family: stub };
+  return { kind: "invalid" };
+}
+
+function extractJoinToken(input: string): string {
+  const trimmed = input.trim();
+  const join = trimmed.match(/\/join\/([^/?#]+)/);
+  if (join) return decodeURIComponent(join[1] ?? "");
+  return trimmed.replace(/^\/+/, "");
+}
+
+function slug(name: string): string {
+  return name
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export const FAMILIES: Family[] = [
   {
     id: "martin",

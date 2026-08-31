@@ -6,14 +6,14 @@ import {
   PrototypeSwitcher,
   type FamilySwitchVariant,
 } from "../prototype-switcher";
-import { FAMILIES } from "./mock-data";
+import { FAMILIES, emptyFamily, type Family } from "./mock-data";
 import { StateDump, type Sheet } from "./host-ui";
 import type { HostActions } from "./host-actions";
 import { VariantA } from "./variant-a";
 import { VariantB } from "./variant-b";
 import { VariantC } from "./variant-c";
 
-// Winner: B chrome + A discard + name-only when one Family.
+// Winner: B chrome + A discard. Chevron always; create/join footer on the sheet.
 // `?variant=A|B|C` keeps the rejected takes. `?one=1` previews a single Membership.
 
 export function FamilySwitchPrototype() {
@@ -22,10 +22,10 @@ export function FamilySwitchPrototype() {
   const variant: FamilySwitchVariant =
     raw === "A" || raw === "C" ? raw : "B";
   const one = searchParams.get("one") === "1";
-  const families = one
-    ? FAMILIES.filter((f) => f.id === "martin")
-    : FAMILIES;
 
+  const [roster, setRoster] = useState<Family[]>(() =>
+    one ? FAMILIES.filter((f) => f.id === "martin") : FAMILIES,
+  );
   const [familyId, setFamilyId] = useState("martin");
   const [sheet, setSheet] = useState<Sheet>({ mode: "closed" });
   const [draftTitle, setDraftTitle] = useState("");
@@ -38,6 +38,7 @@ export function FamilySwitchPrototype() {
   const [lastAction, setLastAction] = useState("chargé sur Famille Martin");
 
   useEffect(() => {
+    setRoster(one ? FAMILIES.filter((f) => f.id === "martin") : FAMILIES);
     setFamilyId("martin");
     setSheet({ mode: "closed" });
     setDraftTitle("");
@@ -50,6 +51,7 @@ export function FamilySwitchPrototype() {
     );
   }, [variant, one]);
 
+  const families = roster;
   const current = families.find((f) => f.id === familyId) ?? families[0];
   const dirty = sheet.mode !== "closed" && draftTitle !== initialTitle;
 
@@ -133,6 +135,39 @@ export function FamilySwitchPrototype() {
         setPendingId(null);
         log("confirm annulé");
       },
+      createFamily: (name, timezone) => {
+        const family = emptyFamily(name, timezone);
+        setRoster((r) => [...r, family]);
+        setPendingId(null);
+        setDraftsByFamily((d) => {
+          const copy = { ...d };
+          delete copy[familyId];
+          return copy;
+        });
+        setFamilyId(family.id);
+        setSheet({ mode: "closed" });
+        setDraftTitle("");
+        setInitialTitle("");
+        setShowDelivered(false);
+        log(`créé ${family.name} · bascule`);
+      },
+      joinFamily: (family) => {
+        setRoster((r) =>
+          r.some((f) => f.id === family.id) ? r : [...r, family],
+        );
+        setPendingId(null);
+        setDraftsByFamily((d) => {
+          const copy = { ...d };
+          delete copy[familyId];
+          return copy;
+        });
+        setFamilyId(family.id);
+        setSheet({ mode: "closed" });
+        setDraftTitle("");
+        setInitialTitle("");
+        setShowDelivered(false);
+        log(`rejoint ${family.name} · bascule`);
+      },
       log,
     }),
     [dirty, draftTitle, draftsByFamily, families, familyId],
@@ -163,9 +198,9 @@ export function FamilySwitchPrototype() {
   return (
     <div className="min-h-dvh bg-stone-200 pb-36 pt-6">
       <p className="mx-auto mb-3 max-w-xl px-4 text-center text-xs text-stone-600">
-        PROTOTYPE — gagnant: B (titre + picker) + jeter le brouillon. ← → pour
-        A/C. `?one=1` = une seule famille (nom, pas de picker). « Ouvrir un
-        brouillon » puis change de famille.
+        PROTOTYPE — gagnant: B (titre + picker, chevron toujours, créer /
+        rejoindre en pied). ← → pour A/C. `?one=1` = une famille. « Ouvrir un
+        brouillon » puis changer, créer ou rejoindre.
       </p>
       {variant === "A" && (
         <VariantA
