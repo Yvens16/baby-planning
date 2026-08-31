@@ -20,6 +20,17 @@ import {
 
 export const variantName = "Réglages plein écran";
 
+function remainLine(ops: Operator[]): string {
+  if (ops.length === 1) return `${ops[0].name} reste`;
+  return `${ops.map((op) => op.name).join(", ")} restent`;
+}
+
+function personalLine(count: number, whose: string): string {
+  const noun = count === 1 ? "rappel perso" : "rappels perso";
+  if (whose === "vos") return `Vos ${count} ${noun}`;
+  return `${count} ${noun} de ${whose}`;
+}
+
 type Screen = "home" | "settings" | "review";
 
 type Review =
@@ -64,9 +75,7 @@ export function VariantB({
         ? [
             "Bébés et types de rappel",
             "Rappels partagés",
-            `${others(review.family)
-              .map((o) => o.name)
-              .join(", ")} restent`,
+            remainLine(others(review.family)),
           ]
         : review.kind === "remove"
           ? [
@@ -78,14 +87,20 @@ export function VariantB({
     const goes =
       review.kind === "leave" && !last
         ? [
-            `Vos ${personalRemindersOf(review.family, session.meId).length} rappels perso`,
+            personalLine(
+              personalRemindersOf(review.family, session.meId).length,
+              "vos",
+            ),
             "L’invitation en cours",
             "Votre accès à cette famille",
           ]
         : review.kind === "remove"
           ? [
               `${review.operator.name} (plus d’accès)`,
-              `${personalRemindersOf(review.family, review.operator.id).length} rappels perso de ${review.operator.name}`,
+              personalLine(
+                personalRemindersOf(review.family, review.operator.id).length,
+                review.operator.name,
+              ),
               "L’invitation en cours",
             ]
           : [

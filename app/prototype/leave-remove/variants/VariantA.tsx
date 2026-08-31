@@ -67,8 +67,8 @@ export function VariantA({
               {session.email}
             </p>
             <p className="mt-0.5 font-serif text-3xl leading-tight">
-              {family.name}
-              <span className="ml-1 text-xl text-[#8a6d4d]">⌄</span>
+              {family.name}{" "}
+              <span className="text-xl text-[#8a6d4d]">⌄</span>
             </p>
           </button>
           <div className="mt-3">

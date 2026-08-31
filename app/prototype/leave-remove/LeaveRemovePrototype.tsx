@@ -52,11 +52,15 @@ export function LeaveRemovePrototype() {
       setSession((prev) => ({ ...prev, banner: null })),
   };
 
+  const mountKey = `${variant}-${scene}`;
+
   return (
     <div className="min-h-dvh bg-white text-zinc-950">
-      {variant === "B" && <VariantB {...props} />}
-      {variant === "C" && <VariantC {...props} />}
-      {variant !== "B" && variant !== "C" && <VariantA {...props} />}
+      {variant === "B" && <VariantB key={mountKey} {...props} />}
+      {variant === "C" && <VariantC key={mountKey} {...props} />}
+      {variant !== "B" && variant !== "C" && (
+        <VariantA key={mountKey} {...props} />
+      )}
       <StatePanel session={session} scene={scene} onReset={reset} />
       <PrototypeSwitcher variants={VARIANTS} />
     </div>
