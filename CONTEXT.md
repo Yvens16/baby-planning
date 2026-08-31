@@ -5,7 +5,7 @@ A family records dated commitments around its babies' lives and gets pinged when
 ## Language
 
 **Family**:
-The household this product is for. Operators, babies, reminder types, and reminders belong to a Family. Many Families exist. A Family has one timezone; Due is in that timezone. A Family ends when its last Membership ends.
+The household this product is for. Operators, babies, reminder types, and reminders belong to a Family. Many Families exist. A Family has one timezone and at most eight Operators; Due is in that timezone. A Family ends when its last Membership ends.
 _Avoid_: Workspace, account, household, group
 
 **Operator**:
