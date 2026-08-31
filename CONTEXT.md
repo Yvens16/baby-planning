@@ -29,7 +29,7 @@ A Family-scoped classification for Reminders. A new Family starts with Vaccin, R
 _Avoid_: Category, tag, kind, label
 
 **Reminder**:
-A dated, typed commitment in a Family. Attached to one or more Babies. Personal (one Operator) or shared (every Operator in that Family). Recipients must be able to see it; anyone who can see it can hard-delete it (row gone), before or after Delivery. After Delivery, the Reminder stays as a completed record (`delivered_at` set) until deleted; Due, Recipients, and title are read-only.
+A dated, typed commitment in a Family. Attached to one or more Babies. Personal (one Operator) or shared (every Operator in that Family). Recipients must be able to see it; anyone who can see it can hard-delete it (row gone), before or after Delivery. After the first Receipt, Due, title, Reminder Type, and Babies are read-only; Recipients stay editable until Delivery. After Delivery, the Reminder stays as a completed record (`delivered_at` set) until deleted; Recipients are then read-only too.
 _Avoid_: Task, todo, event, notification
 
 **Delivered**:
@@ -45,7 +45,7 @@ The push sent when a Reminder is due, to every live Device of each Recipient who
 _Avoid_: Notification, ping, alert, text, WhatsApp
 
 **Receipt**:
-The record that Delivery was accepted for one Recipient on one Reminder. Later ticks skip anyone who already has a Receipt. Unreachable Recipients get no Receipt until they have a live Device; the Reminder stays due.
+The record that Delivery was accepted for one Recipient on one Reminder. Later ticks skip anyone who already has a Receipt. The first Receipt freezes Due, title, Reminder Type, and Babies. Unreachable Recipients get no Receipt until they have a live Device; the Reminder stays due.
 _Avoid_: Ack, send log, notification record
 
 **Recipient**:
