@@ -25,7 +25,7 @@ A child a Family is planning for. Has a display name, optional due and birth dat
 _Avoid_: Child, kid, infant
 
 **Reminder Type**:
-A Family-scoped classification for Reminders. A new Family starts with Vaccine, Appointment, Medication, and Other; Operators can add more, rename any type, or archive unused ones. Archived types stay on existing Reminders but leave pickers.
+A Family-scoped classification for Reminders. A new Family starts with Vaccin, Rendez-vous, Médicament, and Autre; Operators can add more, rename any type, or archive unused ones. Archived types stay on existing Reminders but leave pickers.
 _Avoid_: Category, tag, kind, label
 
 **Reminder**:
