@@ -22,8 +22,9 @@ import { VariantA } from "./variant-a";
 import { VariantB } from "./variant-b";
 import { VariantC } from "./variant-c";
 
-// Three variants of Destinataires on the locked Variant B reminder sheet.
-// `?variant=A|B|C`  `?scene=shared|personal|edit`
+// Winner: A — compact name chips, amber+⏳ if unreachable kept, one-line wait.
+// Shared add pre-selects all (including unreachable). Empty Recipients stay due.
+// `?variant=A|B|C` keeps the rejected takes. `?scene=shared|personal|edit`
 
 function parseScene(raw: string | null): Scene {
   if (raw === "personal" || raw === "edit") return raw;
@@ -139,8 +140,9 @@ export function RecipientChipsPrototype() {
   return (
     <div className="min-h-dvh bg-stone-200 pb-40 pt-6">
       <p className="mx-auto mb-3 max-w-xl px-4 text-center text-xs text-stone-600">
-        PROTOTYPE — Destinataires sans WhatsApp. ← → pour A/B/C. Scènes dans le
-        dump. Thomas et Claire sont injoignables (binaire).
+        PROTOTYPE — gagnant: A (puces compactes). ← → pour B/C. Scènes dans le
+        dump. Thomas et Claire sont injoignables (binaire). Shared: tous
+        pré-sélectionnés. Vide = reste dû.
       </p>
       {variant === "A" && <VariantA key={`A-${scene}`} {...props} />}
       {variant === "B" && <VariantB key={`B-${scene}`} {...props} />}
