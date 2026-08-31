@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prototype:zero-family": "next dev --port 3000"
   },
   "dependencies": {
     "@playwright/cli": "^0.1.18",
