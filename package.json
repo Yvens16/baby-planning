@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "prototype:leave-remove": "next dev --port 3000",
     "prototype:zero-family": "next dev --port 3000"
   },
   "dependencies": {
