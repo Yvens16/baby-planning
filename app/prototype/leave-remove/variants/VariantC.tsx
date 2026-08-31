@@ -203,8 +203,8 @@ export function VariantC({
       )}
 
       {wizard && (
-        <div className="fixed inset-0 z-40 bg-[#f7f4ef]">
-          <div className="mx-auto flex min-h-dvh max-w-lg flex-col px-5 pb-28 pt-8">
+        <div className="fixed inset-0 z-40 overflow-y-auto bg-[#f7f4ef]">
+          <div className="mx-auto max-w-lg px-5 pb-36 pt-8">
             <p className="text-xs uppercase tracking-wide text-stone-500">
               Étape {wizard.step} / {wizard.kind === "leave" && last ? 3 : 2}
             </p>
@@ -304,7 +304,7 @@ export function VariantC({
               </>
             )}
 
-            <div className="mt-auto flex gap-2">
+            <div className="mt-10 flex gap-2">
               <button
                 type="button"
                 onClick={() => {
