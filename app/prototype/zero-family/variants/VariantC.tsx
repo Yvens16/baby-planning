@@ -125,7 +125,7 @@ export function VariantC({
       {sheet !== "none" && (
         <div className="fixed inset-0 z-30 bg-black/40" onClick={() => open("none")}>
           <div
-            className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-white px-5 pb-10 pt-4"
+            className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-white px-5 pb-28 pt-4"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-stone-200" />
