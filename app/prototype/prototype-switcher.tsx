@@ -20,6 +20,14 @@ export const PUSH_PERMISSION_VARIANTS = {
 
 export type PushPermissionVariant = keyof typeof PUSH_PERMISSION_VARIANTS;
 
+export const RECIPIENT_CHIPS_VARIANTS = {
+  A: "Puces compactes",
+  B: "Liste à cocher",
+  C: "Deux zones",
+} as const;
+
+export type RecipientChipsVariant = keyof typeof RECIPIENT_CHIPS_VARIANTS;
+
 export function PrototypeSwitcher({
   current,
   variants,

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "prototype:family-switch": "next dev",
     "prototype:push-permission": "next dev",
+    "prototype:recipient-chips": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
